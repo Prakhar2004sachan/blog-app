@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { RxCross2 } from "react-icons/rx";
 import { FaHatCowboy } from "react-icons/fa";
-import { FaBars } from "react-icons/fa";
+import { HiMiniBars4 } from "react-icons/hi2";
 
 function NavBar() {
   const navLinks: string[] = ["Home", "Posts", "About", "Contact", "Login"];
@@ -20,7 +20,7 @@ function NavBar() {
     <div className="w-full h-[5rem] bg-zinc-100 px-6 border-b-2 shadow-md flex items-center justify-between">
       <FaHatCowboy className="text-xl cursor-pointer" />
       <div className="relative">
-        <FaBars
+        <HiMiniBars4
           onClick={() => setVisible(true)}
           className="text-xl cursor-pointer"
         />

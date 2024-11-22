@@ -7,12 +7,8 @@ import { HiMiniBars4 } from "react-icons/hi2";
 function NavBar() {
   const navLinks: string[] = ["Home", "Posts", "About", "Contact", "Login"];
   const routes = (link: string) => {
-    let address = link.toLowerCase();
-    if (address == "home") {
-      return (address = "");
-    } else {
-      return address;
-    }
+    const address = link.toLowerCase();
+    return address === "home" ? "" : address;
   };
   const [visible, setVisible] = useState(false);
 
@@ -20,14 +16,38 @@ function NavBar() {
     <div className="w-full h-[5rem] bg-zinc-100 px-6 border-b-2 shadow-md flex items-center justify-between">
       <FaHatCowboy className="text-xl cursor-pointer" />
       <div className="relative">
+        {/* Large Devices */}
+        <div className="hidden lg:flex gap-10 items-center justify-center rounded-lg">
+          {navLinks.map((i, index) => (
+            <NavLink
+              className={({ isActive }) =>
+                `py-2 px-4 rounded-full text-center transition-all duration-300 ${
+                  isActive
+                    ? "bg-aqua text-blue"
+                    : i === "Login"
+                    ? "bg-black text-white w-[10rem]"
+                    : "hover:bg-gray-300 hover:text-black"
+                }`
+              }
+              to={routes(i)}
+              onClick={() => setVisible(false)}
+              key={index}
+            >
+              <p>{i}</p>
+            </NavLink>
+          ))}
+        </div>
+        {/* Mobile and Medium Devices */}
         <HiMiniBars4
           onClick={() => setVisible(true)}
-          className="text-xl cursor-pointer"
+          className="text-xl cursor-pointer lg:hidden"
         />
         <div
-          className={`border-2 absolute gap-2 flex-col w-[94vw] sm:w-[98vw] bg-white right-[-10px] top-0 ${
-            visible ? "flex" : "hidden"
-          } transition-all duration-500`}
+          className={`z-10 border-2 absolute gap-2 flex-col w-[94vw] sm:w-[96vw] lg:hidden bg-white right-[-10px] top-0 transition-all duration-500 ${
+            visible
+              ? "opacity-100 translate-y-0"
+              : "opacity-0 -translate-y-5 pointer-events-none"
+          }`}
         >
           <div className="flex justify-between items-center px-4 py-2">
             <FaHatCowboy className="text-xl cursor-pointer" />
@@ -39,11 +59,15 @@ function NavBar() {
           <div className="py-10 pt-10 flex flex-col gap-4 items-center justify-center shadow-xl rounded-lg">
             {navLinks.map((i, index) => (
               <NavLink
-                className={`py-3 rounded-full w-[10rem] text-center hover:text-white transition-all duration-300 ${
-                  i == "Login"
-                    ? "bg-black text-white"
-                    : "hover:bg-gray-300 hover:text-black"
-                }`}
+                className={({ isActive }) =>
+                  `py-3 rounded-full w-[10rem] text-center hover:text-white transition-all duration-300 ${
+                    isActive
+                      ? "bg-aqua text-blue"
+                      : i === "Login"
+                      ? "bg-black text-white"
+                      : "hover:bg-gray-300 hover:text-black"
+                  }`
+                }
                 to={routes(i)}
                 onClick={() => setVisible(false)}
                 key={index}

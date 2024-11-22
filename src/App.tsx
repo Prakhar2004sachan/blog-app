@@ -1,26 +1,25 @@
-import React from "react"
-import { Routes, Route } from "react-router-dom"
-import Home from "./pages/Home"
-import NavBar from "./components/NavBar"
-import Contact from "./pages/Contact"
-import About from "./pages/About"
-import Posts from "./pages/Posts"
-
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Home from "./pages/Home";
+import NavBar from "./components/NavBar";
+import Contact from "./pages/Contact";
+import About from "./pages/About";
+import Posts from "./pages/Posts";
 
 function App() {
-
   return (
-    <div className="">
-    <NavBar/>
-
-    <Routes>
-      <Route path="/" element={<Home/>}/>
-      <Route path="/posts" element={<Posts/>}/>
-      <Route path="/about" element={<About/>}/>
-      <Route path="/contact" element={<Contact/>}/>
-    </Routes>
+    <div>
+      <NavBar />
+      <div className="px-4 sm:px-10">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/posts" element={<Posts />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/contact" element={<Contact />} />
+        </Routes>
+      </div>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;

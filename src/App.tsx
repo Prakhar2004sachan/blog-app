@@ -10,7 +10,7 @@ import Posts from "./pages/Posts"
 function App() {
 
   return (
-    <div className="px-2 sm:px-[5vw] md:px-[10vw] lg:px-[17vw]">
+    <div className="">
     <NavBar/>
 
     <Routes>

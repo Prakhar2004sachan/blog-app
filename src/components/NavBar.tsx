@@ -5,7 +5,7 @@ import { FaHatCowboy } from "react-icons/fa";
 import { HiMiniBars4 } from "react-icons/hi2";
 
 function NavBar() {
-  const navLinks: string[] = ["Home", "Posts", "About", "Contact", "Login"];
+  const navLinks: string[] = ["Home", "Posts", "About", "Contact"];
   const routes = (link: string) => {
     const address = link.toLowerCase();
     return address === "home" ? "" : address;
@@ -23,19 +23,24 @@ function NavBar() {
               className={({ isActive }) =>
                 `py-2 px-4 rounded-full text-center transition-all duration-300 ${
                   isActive
-                    ? "bg-aqua text-blue"
+                    ? "border-2 border-gray-300 shadow-lg"
                     : i === "Login"
                     ? "bg-black text-white w-[10rem]"
                     : "hover:bg-gray-300 hover:text-black"
                 }`
               }
               to={routes(i)}
-              onClick={() => setVisible(false)}
               key={index}
             >
               <p>{i}</p>
             </NavLink>
           ))}
+          <NavLink
+            to="/login"
+            className="py-2 px-4 rounded-full text-center transition-all duration-300 bg-black text-white w-[10rem]"
+          >
+            Login
+          </NavLink>
         </div>
         {/* Mobile and Medium Devices */}
         <HiMiniBars4
@@ -75,6 +80,13 @@ function NavBar() {
                 {i}
               </NavLink>
             ))}
+            <NavLink
+              to="/login"
+              onClick={() => setVisible(false)}
+              className="py-2 px-4 rounded-full text-center transition-all duration-300 bg-black text-white w-[10rem]"
+            >
+              Login
+            </NavLink>
           </div>
         </div>
       </div>

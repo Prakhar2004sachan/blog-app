@@ -22,18 +22,18 @@ function Tags() {
   }
 
   return (
-    <div className="cursor-pointer flex gap-6 items-center justify-between mt-[2rem] px-4">
+    <div className="cursor-pointer flex gap-6 items-center justify-between mt-[2rem] sm:mt-[4rem] px-4">
       <p
-        className={`text-sm sm:text-md py-1 font-medium rounded-full ${
+        className={`text-md sm:text-lg py-1 font-medium rounded-full ${
           selected == "" ? "bg-white" : "bg-black text-white px-4"
         }`}
       >
         {selected == "" ? "Select Categories" : `Selected : ${selected}`}
       </p>
       <div className="relative">
-        <GoSingleSelect onClick={() => setClick(true)} className={`text-xl}`}/>
+        <GoSingleSelect onClick={() => setClick(true)} className="text-xl"/>
         <div
-          className={`px-4 py-4 border-2 shadow-lg rounded-lg absolute w-[94vw] bg-white h-[60vh] flex-col top-0 right-[-24px] gap-4 ${
+          className={`px-4 py-4 border-2 shadow-lg rounded-lg absolute w-[94vw] sm:w-[98vw] bg-white h-[60vh] flex-col top-0 right-[-24px] sm:right-[-90px] gap-4 ${
             click ? "flex" : "hidden"
           }`}
         >

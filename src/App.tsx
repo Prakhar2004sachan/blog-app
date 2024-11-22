@@ -10,7 +10,7 @@ function App() {
   return (
     <div>
       <NavBar />
-      <div className="px-4 sm:px-10">
+      <div className="flex justify-center px-4 sm:px-8 md:px-[5rem] 2xl:px-[26rem]">
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/posts" element={<Posts />} />

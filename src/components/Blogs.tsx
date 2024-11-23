@@ -1,5 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
+import Blog from "./Blog";
 
 const data = [
   {
@@ -76,35 +77,16 @@ const data = [
   },
 ];
 
-function Blogs({ count }: { count: number }) {
-  return <BlogPosts count={count} />;
+function Blogs() {
+  return <BlogPosts />;
 }
 
-function BlogPosts({ count }: { count: number }) {
+function BlogPosts() {
   return (
     <div className="my-[2rem]">
       <div className="mt-[2rem] mb-[2rem] sm:grid sm:grid-cols-2 gap-4 xl:grid-cols-3 ">
-        {data.slice(0, count).map((i, index) => (
-          <motion.div
-            className="cursor-pointer mt-[1rem] mb-[1rem] px-2 py-4 bg-white rounded-2xl transform hover:scale-105 transition-all duration-300"
-            key={index}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-          >
-            <img src={i.img} alt={`blog-${index}`} className="rounded-2xl" />
-            <div className="mt-6 px-2 flex flex-col">
-              <p className="text-base text-gray-500">Nov 20, 2024</p>
-              <h2 className="blog-h2 text-pretty text-xl mt-3 text-gray-900 leading-8">
-                {i.title}
-              </h2>
-              <p className="mt-2 lg:mt-4 text-sm sm:text-[14px] leading-6 text-gray-700">
-                {i.info}
-              </p>
-              {/* dump code */}
-            </div>
-          </motion.div>
+        {[...Array(6)].map((i,index)=>(
+          <Blog id={`${index}+afld`}/>
         ))}
       </div>
     </div>

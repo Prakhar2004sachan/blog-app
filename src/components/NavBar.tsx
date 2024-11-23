@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { RxCross2 } from "react-icons/rx";
 import { FaHatCowboy } from "react-icons/fa";
 import { HiMiniBars4 } from "react-icons/hi2";
+import OutsideClickHandler from "react-outside-click-handler";
 
 function NavBar() {
   const navLinks: string[] = ["Home", "Posts", "About", "Contact"];
@@ -47,48 +48,52 @@ function NavBar() {
           onClick={() => setVisible(true)}
           className="text-xl cursor-pointer lg:hidden"
         />
-        <div
-          className={`z-10 border-2 absolute gap-2 flex-col w-[94vw] sm:w-[96vw] lg:hidden bg-white right-[-10px] top-0 transition-all duration-500 ${
-            visible
-              ? "opacity-100 translate-y-0"
-              : "opacity-0 -translate-y-5 pointer-events-none"
-          }`}
-        >
-          <div className="flex justify-between items-center px-4 py-2">
-            <FaHatCowboy className="text-xl cursor-pointer" />
-            <RxCross2
-              onClick={() => setVisible(false)}
-              className="text-2xl cursor-pointer bg-gray-300 rounded-full p-1"
-            />
-          </div>
-          <div className="py-10 pt-10 flex flex-col gap-4 items-center justify-center shadow-xl rounded-lg">
-            {navLinks.map((i, index) => (
-              <NavLink
-                className={({ isActive }) =>
-                  `py-3 rounded-full w-[10rem] text-center hover:text-white transition-all duration-300 ${
-                    isActive
-                      ? "bg-aqua text-blue"
-                      : i === "Login"
-                      ? "bg-black text-white"
-                      : "hover:bg-gray-300 hover:text-black"
-                  }`
-                }
-                to={routes(i)}
-                onClick={() => setVisible(false)}
-                key={index}
-              >
-                {i}
-              </NavLink>
-            ))}
-            <NavLink
-              to="/login"
-              onClick={() => setVisible(false)}
-              className="py-2 px-4 rounded-full text-center transition-all duration-300 bg-black text-white w-[10rem]"
+        {visible && (
+          <OutsideClickHandler onOutsideClick={() => setVisible(false)}>
+            <div
+              className={`z-10 border-2 absolute gap-2 flex-col w-[94vw] sm:w-[96vw] lg:hidden bg-white right-[-10px] top-0 transition-all duration-500 ${
+                visible
+                  ? "opacity-100 translate-y-0"
+                  : "opacity-0 -translate-y-5 pointer-events-none"
+              }`}
             >
-              Login
-            </NavLink>
-          </div>
-        </div>
+              <div className="flex justify-between items-center px-4 py-2">
+                <FaHatCowboy className="text-xl cursor-pointer" />
+                <RxCross2
+                  onClick={() => setVisible(false)}
+                  className="text-2xl cursor-pointer bg-gray-300 rounded-full p-1"
+                />
+              </div>
+              <div className="py-10 pt-10 flex flex-col gap-4 items-center justify-center shadow-xl rounded-lg">
+                {navLinks.map((i, index) => (
+                  <NavLink
+                    className={({ isActive }) =>
+                      `py-3 rounded-full w-[10rem] text-center hover:text-white transition-all duration-300 ${
+                        isActive
+                          ? "bg-aqua text-blue"
+                          : i === "Login"
+                          ? "bg-black text-white"
+                          : "hover:bg-gray-300 hover:text-black"
+                      }`
+                    }
+                    to={routes(i)}
+                    onClick={() => setVisible(false)}
+                    key={index}
+                  >
+                    {i}
+                  </NavLink>
+                ))}
+                <NavLink
+                  to="/login"
+                  onClick={() => setVisible(false)}
+                  className="py-2 px-4 rounded-full text-center transition-all duration-300 bg-black text-white w-[10rem]"
+                >
+                  Login
+                </NavLink>
+              </div>
+            </div>
+          </OutsideClickHandler>
+        )}
       </div>
     </div>
   );

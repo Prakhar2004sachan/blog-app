@@ -40,7 +40,7 @@ function Posts() {
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="text-xl text-center font-bold mt-10"
+        className="text-xl lg:text-5xl text-center font-bold mt-10"
       >
         Latest Posts
       </motion.h1>
@@ -51,7 +51,7 @@ function Posts() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.7 }}
       >
-        <Blogs count={10} />
+        <Blogs count={15} />
       </motion.div>
     </motion.div>
   );

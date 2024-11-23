@@ -8,7 +8,7 @@ function Home() {
     <div>
       <Hero />
       <Tags />
-      <Blogs/>
+      <Blogs count={5}/>
     </div>
   );
 }

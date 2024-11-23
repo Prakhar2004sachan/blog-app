@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
-
 *{
     box-sizing: border-box;
     margin: 0;
@@ -15,7 +13,7 @@
     background-color: aqua;
 }
 
-.hero-heading{
+.hero-heading, h1{
     font-family: "Geist", serif;
     font-size: 2.5rem;
 }
@@ -31,4 +29,8 @@
 .active p{
     background-color: black;
     color: white;
+}
+
+.about li{
+    padding-top: .5rem;
 }

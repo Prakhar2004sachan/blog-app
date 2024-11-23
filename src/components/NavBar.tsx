@@ -13,8 +13,8 @@ function NavBar() {
   const [visible, setVisible] = useState(false);
 
   return (
-    <div className="w-full h-[5rem] bg-zinc-100 px-6 border-b-2 shadow-md flex items-center justify-between">
-      <FaHatCowboy className="text-xl cursor-pointer" />
+    <div className="2xl:px-[20rem] w-full h-[5rem] bg-zinc-100 px-6 border-b-2 shadow-md flex items-center justify-between">
+      <FaHatCowboy className="text-xl cursor-pointer 2xl:text-4xl" />
       <div className="relative">
         {/* Large Devices */}
         <div className="hidden lg:flex gap-10 items-center justify-center rounded-lg">

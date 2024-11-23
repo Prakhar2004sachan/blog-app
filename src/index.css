@@ -27,3 +27,8 @@
     font-weight: 900;
     letter-spacing: 1px;
 }
+
+.active p{
+    background-color: black;
+    color: white;
+}

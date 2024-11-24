@@ -1,19 +1,25 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
+  content: ["./index.html", "./src/**/*.{js,ts,jsx,tsx}"],
   theme: {
     extend: {
-      mixBlendMode: {
-        'color-burn': 'color-burn',
+      animation: {
+        fadeIn: "fadeIn 1s ease-in-out",
+        fadeInSlow: "fadeIn 2s ease-in-out",
+        slideIn: "slideIn 1s ease-in-out",
       },
-      zIndex: {
-        '100': '100', // Add z-100 if you need it
+      keyframes: {
+        fadeIn: {
+          "0%": { opacity: 0 },
+          "100%": { opacity: 1 },
+        },
+        slideIn: {
+          "0%": { transform: "translateX(-50%)", opacity: 0 },
+          "100%": { transform: "translateX(0)", opacity: 1 },
+        },
       },
     },
   },
   plugins: [],
-}
+};
 

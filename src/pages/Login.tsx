@@ -38,7 +38,7 @@ function Login() {
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
         >
-          {!login && (
+          {login ? "" : (
             <motion.input
               key="name-input"
               className="h-12 px-4 outline-none border-2 border-black rounded-lg focus:border-blue-500 transition-all duration-300"

@@ -1,50 +1,114 @@
-import React, { useRef, useState } from "react";
-import parse from "html-react-parser";
-import axios from "axios";
+import React, { useEffect, useMemo, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import EditEditor from "../components/EditEditor";
+import axios from "axios";
 import { backendUrl } from "../App";
-import JoditEditor from "jodit-react";
-// import { JSONContent } from "novel";
-// import { convertJSONToHTML } from "../components/util/jsonToHtml"; // Example utility function
+import FormInput from "../context/Molecules";
+import EditorAtom from "../context/editoratom";
+import ButtonAtom from "../context/buttonatom";
 
 type Input = {
   heading: string;
 };
 
 function EditAbout() {
-  const editor = useRef(null);
+  const [data, setData] = useState<{ heading?: string; content?: string }>({});
   const [content, setContent] = useState("");
-  // const [value, setValue] = useState<string | undefined>(undefined);
-  // console.log(value);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<Input>();
 
-  const onSubmit: SubmitHandler<Input> = async (data) => {
-    const formData = { ...data, content: content };
-    console.log(formData);
-    // Handle submission
-   try {
-     const formData = {
-       ...data,
-       content: content,
-     };
+  // Jodit Editor Configuration
+  const config = useMemo(
+    () => ({
+      readonly: false,
+      placeholder: data.content || "Start typing...",
+      height: 800,
+    }),
+    [data.content]
+  );
 
-     // Make API call
-     const response = await axios.post(backendUrl+"api/about/update-about", formData);
+  // Fetch existing data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${backendUrl}api/about/get-about`);
+        if (res.data.success) {
+          const aboutData = res.data.aboutData[0];
+          setData({ heading: aboutData.heading, content: aboutData.content });
+          setContent(aboutData.content || "");
+          setValue("heading", aboutData.heading || ""); // Set form value
+          console.log(aboutData);
+        } else {
+          throw new Error("Failed to fetch data");
+        }
+      } catch (error) {
+        setError("Error fetching About data. Please try again later.");
+        console.error("Error fetching about data", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, [setValue]);
 
-     if (response.data.success) {
-       console.log("About Page Updated", response.data);
-     } else {
-       console.error("Update Failed", response.data.message);
-     }
-   } catch (err) {
-     console.error("Error updating About Page", err);
-   }
+  // Handle form submission
+  const onSubmit: SubmitHandler<Input> = async (formData) => {
+    if (!content) {
+      setError("Content cannot be empty");
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      const response = await axios.post(`${backendUrl}api/about/update-about`, {
+        ...formData,
+        content,
+      });
+
+      if (response.data.success) {
+        alert("About Page Updated Successfully");
+        setError(null);
+      } else {
+        throw new Error(response.data.message);
+      }
+    } catch (error) {
+      setError("Failed to update About Page. Please try again.");
+      console.error("Error updating About Page", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div>
+          <p className="text-red-500">{error}</p>
+          <button
+            className="mt-4 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
+            onClick={() => window.location.reload()}
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-10 w-full">
@@ -55,24 +119,24 @@ function EditAbout() {
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col mt-10 gap-10 items-center justify-center"
       >
-        <input
-          placeholder="Enter Heading for about page"
-          className="w-full h-[3rem] border-2 border-black px-4 py-2 rounded-lg"
+        {/* Heading Input */}
+        <FormInput
+          placeholder={data.heading}
           {...register("heading", { required: "Heading is required" })}
+          error={errors.heading?.message}
         />
-        {errors.heading && (
-          <p className="text-red-500">{errors.heading.message}</p>
-        )}
-        <div className="w-full">
-          <JoditEditor
-            ref={editor}
-            value={content}
-            onChange={(content) => setContent(content)}
-          />
-        </div>
-        <div className="bg-black text-white px-4 py-2 text-center rounded-full w-[5rem]">
-          <button type="submit">Submit</button>
-        </div>
+        {/* Content Editor */}
+        <EditorAtom
+          value={content}
+          onChange={(value) => setContent(value)}
+          config={config}
+        />
+        {/* Submit Button */}
+        <ButtonAtom
+          label={isSubmitting ? "Submitting..." : "Submit"}
+          type="submit"
+          disabled={isSubmitting}
+        />
       </form>
     </div>
   );

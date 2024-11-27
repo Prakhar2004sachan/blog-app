@@ -13,6 +13,7 @@ import ImgTool from "./components/ImgTool";
 import AllImages from "./pages/AllImages";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import EditPost from "./pages/EditPost";
 
 export const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -32,6 +33,7 @@ function App() {
           <Route path="/chat" element={<ChatComponent />} />
           <Route path="/editor" element={<WritePostJ />} />
           <Route path="/img-tool" element={<ImgTool />} />
+          <Route path="/edit/:postId" element={<EditPost />} />
           <Route path="/uploded-images" element={<AllImages />} />
         </Routes>
         <Footer />

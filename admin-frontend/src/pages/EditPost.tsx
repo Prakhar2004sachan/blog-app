@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState } from 'react'
 import { SubmitHandler, useForm } from "react-hook-form";
 import JoditEditor from "jodit-react";
 import axios from "axios";
@@ -11,7 +11,7 @@ type Input = {
   img: File | null; // File type for image
 };
 
-function WritePostJ() {
+function EditPost() {
   const editor = useRef(null);
   const [content, setContent] = useState("");
   const [img, setImg] = useState<File | null>(null); // For storing the uploaded image file
@@ -127,5 +127,4 @@ function WritePostJ() {
     </div>
   );
 }
-
-export default WritePostJ;
+export default EditPost

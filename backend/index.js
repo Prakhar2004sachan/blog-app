@@ -6,6 +6,7 @@ import connectCloudinary from "./config/cloudinary.js"; // Cloudinary setup
 import postRouter from "./routes/postRouter.js"; // Routes for posts
 import aboutRouter from "./routes/aboutRoute.js";
 import imgRouter from "./routes/imgRoute.js";
+import authRouter from "./routes/authRoute.js";
 
 // Initialize App
 const app = express();
@@ -25,6 +26,7 @@ app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 app.use("/api/blog", postRouter); // Blog routes
 app.use("/api/about", aboutRouter); // Update About Page
 app.use("/api/img", imgRouter); //Img tool
+app.use("/api/auth", authRouter);
 
 // Health Check
 app.get("/", (req, res) => {

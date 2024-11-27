@@ -31,8 +31,8 @@ const updateAbout = async (req, res) => {
 
 const getAbout = async (req, res) => {
   try {
-    const data = await aboutModel.find({});
-    res.json({ success: true, data });
+    const aboutData = await aboutModel.find({});
+    res.json({ success: true, aboutData });
   } catch (error) {
     res.json({ success: false, message: error });
   }

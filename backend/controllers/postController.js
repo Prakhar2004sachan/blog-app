@@ -56,4 +56,26 @@ const listPost = async (req, res) => {
   }
 };
 
-export { addPost, listPost };
+// remove post
+const removePost = async (req, res) => {
+  try {
+    const { postId } = req.body;
+    await postModel.findByIdAndDelete(postId);
+    res.json({ success: false, message: "Post Deleted" });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+// list single post
+const signlePost = async (req, res) => {
+  try {
+    const { postId } = req.body;
+    const postData = await postModel.findById(postId);
+    res.json({ success: true, postData });
+  } catch (error) {
+    res.json({ success: false, message: error.message });
+  }
+};
+
+export { addPost, listPost, signlePost, removePost };

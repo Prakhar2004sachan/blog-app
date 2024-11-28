@@ -5,12 +5,14 @@ import { backendUrl } from "../App";
 import NavigationButtons from "../context/navigationbuttons";
 import TagsSection from "../context/tagssection";
 import PostContent from "../context/postcontent";
+import { toast } from "sonner";
 
 type BlogProps = {
   _id: string;
   mainImg: string;
   heading: string;
   tags: string[];
+  links: string[];
   shortDescription: string;
   date: string;
   content: string;
@@ -21,14 +23,28 @@ function PostInfo() {
   const [blog, setBlog] = useState<BlogProps | null>(null);
   const navigate = useNavigate();
 
+  const removePost = async (postId: string) => {
+    try {
+      const res = await axios.post(`${backendUrl}api/blog/remove`, { postId });
+      if (res.data.success) {
+        toast.success("Post Deleted");
+        navigate("/all"); // Navigate back to the post list
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      toast.error("An error occurred while deleting the post.");
+      console.error("Error deleting post:", error);
+    }
+  };
+
   useEffect(() => {
     const fetchBlog = async () => {
       try {
         const res = await axios.get(`${backendUrl}api/blog/list-posts`);
         if (res.data.success) {
-          // Find the blog matching the postId
           const post = res.data.posts.find((p: BlogProps) => p._id === postId);
-          setBlog(post || null); // Set post or null if not found
+          setBlog(post || null);
         } else {
           console.error("Error fetching blog:", res.data.message);
         }
@@ -58,6 +74,7 @@ function PostInfo() {
       <NavigationButtons
         navigateBack={() => navigate("/all")}
         navigateEdit={() => navigate(`/edit/${blog._id}`)}
+        deletePost={() => removePost(blog._id)} // Pass function reference correctly
       />
       <TagsSection tags={blog.tags} date={blog.date} />
       <PostContent
@@ -65,6 +82,7 @@ function PostInfo() {
         shortDescription={blog.shortDescription}
         mainImg={blog.mainImg}
         content={blog.content}
+        links= {blog.links}
       />
     </div>
   );

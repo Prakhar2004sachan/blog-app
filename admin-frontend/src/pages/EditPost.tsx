@@ -1,69 +1,144 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import JoditEditor from "jodit-react";
 import axios from "axios";
 import { backendUrl } from "../App";
+import { useNavigate, useParams } from "react-router-dom";
+// import ButtonAtom from "../context/buttonatom";
+import NavigationButtons from "../context/navigationbuttons";
+import { toast } from "sonner";
 
 type Input = {
   heading: string;
   shortDescription: string;
   tags: string;
-  img: File | null; // File type for image
+  links: string;
+  img: File | null;
 };
 
 function EditPost() {
+  const { postId } = useParams();
+  console.log(postId);
   const editor = useRef(null);
-  const [content, setContent] = useState("");
-  const [img, setImg] = useState<File | null>(null); // For storing the uploaded image file
+  const [content, setContent] = useState(""); // Content for JoditEditor
+  const [img, setImg] = useState<File | null>(null); // For uploaded image
+  const [loading, setLoading] = useState(true); // For loading state
+  const [postData, setPostData] = useState<any>([]); // Store fetched post data
+  const navigate = useNavigate();
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<Input>();
 
-  const config = {
-    height: 600, // Adjust the height as needed
-    // Other configuration options...
+  const removePost = async (postId: string) => {
+    try {
+      const res = await axios.post(`${backendUrl}api/blog/remove`, { postId });
+      if (res.data.success) {
+        toast.success("Post Deleted");
+        navigate("/all"); // Navigate back to the post list
+      } else {
+        toast.error(res.data.message);
+      }
+    } catch (error) {
+      toast.error("An error occurred while deleting the post.");
+      console.error("Error deleting post:", error);
+    }
   };
 
+  // Fetch Post Data by ID
+  useEffect(() => {
+    const fetchPost = async () => {
+      try {
+        const response = await axios.post(`${backendUrl}api/blog/single-post`, {
+          postId,
+        });
+        if (response.data.success) {
+          const data = response.data.postData;
+          setPostData(data); // Save fetched post data
+          setContent(data.content); // Set content for editor
+          setLoading(false);
+
+          // Pre-fill form fields
+          setValue("heading", data.heading);
+          setValue("shortDescription", data.shortDescription);
+          setValue("tags", data.tags.join(", "));
+          setValue("links", data.links.join(", "));
+        } else {
+          alert("Error fetching post data");
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Error fetching post:", error);
+        alert("Failed to load post data.");
+        setLoading(false);
+      }
+    };
+
+    fetchPost();
+  }, [postId, setValue]);
+
+  // Handle Submit
   const onSubmit: SubmitHandler<Input> = async (data) => {
-    if (!img) {
-      alert("Please upload an image");
+    if (!postId) {
+      alert("postId is missing!");
+      return;
+    }
+    if (!img && !postData?.mainImg) {
+      alert("Please upload an image or keep the existing one.");
       return;
     }
 
-    // Create FormData to handle both text and file uploads
+    // Prepare FormData
     const formData = new FormData();
+    formData.append("postId", postId);
     formData.append("heading", data.heading);
     formData.append("shortDescription", data.shortDescription);
     formData.append("content", content);
     formData.append("tags", data.tags);
-    formData.append("mainImg", img);
+    formData.append("links", data.links);
+    if (img) formData.append("mainImg", img); // Include new image only if uploaded
 
     try {
-      const response = await axios.post(`${backendUrl}api/blog/add`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      setLoading(true); // Set loading state to true when submitting
+      const response = await axios.post(
+        `${backendUrl}api/blog/update`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+
+      setLoading(false); // Set loading to false after submission
 
       if (response.data.success) {
-        console.log("Post Uploaded", response.data);
-        alert("Post added successfully!");
+        alert("Post updated successfully!");
       } else {
-        console.error("Uploading Failed", response.data.message);
-        alert("Error uploading post.");
+        alert("Error updating post.");
       }
     } catch (error) {
-      console.error("Error submitting post:", error);
+      setLoading(false);
+      console.error("Error updating post:", error);
       alert("An error occurred. Please try again.");
     }
   };
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="mt-10 w-full">
-      <h1 className="text-center font-bold text-3xl sm:text-5xl">Write Post</h1>
+      <NavigationButtons
+        navigateBack={() => navigate(-1)}
+        navigateEdit={() => navigate(`/all`)}
+        deletePost={() => removePost(postId)} // Pass function reference correctly
+      />
+      <h1 className="mt-10 text-center font-bold text-3xl sm:text-5xl">Edit Post</h1>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
@@ -96,6 +171,13 @@ function EditPost() {
         />
         {errors.tags && <p className="text-red-500">{errors.tags.message}</p>}
 
+        <input
+          placeholder="Enter Links (comma separated)"
+          className="w-full h-[3rem] border-2 border-black px-4 py-2 rounded-lg"
+          {...register("links", { required: "Links are required" })}
+        />
+        {errors.links && <p className="text-red-500">{errors.links.message}</p>}
+
         <div className="flex items-center gap-10">
           <p>Upload Image:</p>
           <input
@@ -104,16 +186,14 @@ function EditPost() {
             onChange={(e) => {
               const file = e.target.files?.[0];
               if (file) {
-                setImg(file); // Set the file if selected
+                setImg(file);
               }
             }}
-            required
           />
         </div>
 
         <div className="w-full">
           <JoditEditor
-            config={config}
             ref={editor}
             value={content}
             onChange={(newContent) => setContent(newContent)}
@@ -121,10 +201,13 @@ function EditPost() {
         </div>
 
         <div className="bg-black text-white px-4 py-2 text-center rounded-full w-[5rem]">
-          <button type="submit">Submit</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Updating..." : "Submit"}
+          </button>
         </div>
       </form>
     </div>
   );
 }
-export default EditPost
+
+export default EditPost;

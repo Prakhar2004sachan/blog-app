@@ -8,6 +8,7 @@ type Input = {
   heading: string;
   shortDescription: string;
   tags: string;
+  learnings: string;
   img: File | null; // File type for image
 };
 
@@ -22,10 +23,6 @@ function WritePostJ() {
     formState: { errors },
   } = useForm<Input>();
 
-  const config = {
-    height: 600, // Adjust the height as needed
-    // Other configuration options...
-  };
 
   const onSubmit: SubmitHandler<Input> = async (data) => {
     if (!img) {
@@ -39,6 +36,7 @@ function WritePostJ() {
     formData.append("shortDescription", data.shortDescription);
     formData.append("content", content);
     formData.append("tags", data.tags);
+    formData.append("links", data.learnings);
     formData.append("mainImg", img);
 
     try {
@@ -96,6 +94,15 @@ function WritePostJ() {
         />
         {errors.tags && <p className="text-red-500">{errors.tags.message}</p>}
 
+        <input
+          placeholder="Enter Learnings (comma separated)"
+          className="w-full h-[3rem] border-2 border-black px-4 py-2 rounded-lg"
+          {...register("learnings", { required: "Tags are required" })}
+        />
+        {errors.learnings && (
+          <p className="text-red-500">{errors.learnings.message}</p>
+        )}
+
         <div className="flex items-center gap-10">
           <p>Upload Image:</p>
           <input
@@ -113,7 +120,6 @@ function WritePostJ() {
 
         <div className="w-full">
           <JoditEditor
-            config={config}
             ref={editor}
             value={content}
             onChange={(newContent) => setContent(newContent)}

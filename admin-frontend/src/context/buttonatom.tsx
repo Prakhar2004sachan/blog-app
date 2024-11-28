@@ -5,15 +5,17 @@ type ButtonAtomProps = {
   onClick?: () => void;
   icon?: JSX.Element;
   type?: "button" | "submit" | "reset";
+  color: string;
 };
 
 const ButtonAtom: React.FC<ButtonAtomProps> = ({
   label,
   onClick,
   icon,
+  color,
   type = "button",
 }) => (
-  <div className="bg-black py-2 text-white flex items-center justify-center px-4 rounded-full">
+  <div className={`${color} py-2 text-white flex items-center justify-center px-4 rounded-full`}>
     {icon && <span className="mr-2 text-2xl">{icon}</span>}
     <button
       type={type}

@@ -23,12 +23,18 @@ const addPost = async (req, res) => {
     const content = req.body.content[0]; // Access the first element of the heading array
     const shortDescription = req.body.shortDescription[0]; // Access the first element of the description array
     const tags = req.body.tags[0];
+    const links = req.body.links[0];
     const tagsArr = tags.split(",").map((tag) => tag.trim());
+    const linksArr = links
+      .split(",")
+      .map((link) => link.trim().replace(/\s+/g, "-"))
+      .filter(Boolean);
 
     const postData = {
       heading,
       shortDescription,
       mainImg,
+      links: linksArr,
       tags: tagsArr,
       date: Date.now(),
       content,
@@ -49,7 +55,7 @@ const addPost = async (req, res) => {
 // List Posts
 const listPost = async (req, res) => {
   try {
-    const posts = await postModel.find({});
+    const posts = await postModel.find({}).sort({ date: -1 }); // Latest posts first
     res.json({ success: true, posts });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -61,14 +67,14 @@ const removePost = async (req, res) => {
   try {
     const { postId } = req.body;
     await postModel.findByIdAndDelete(postId);
-    res.json({ success: false, message: "Post Deleted" });
+    res.json({ success: true, message: "Post Deleted" });
   } catch (error) {
     res.json({ success: false, message: error.message });
   }
 };
 
 // list single post
-const signlePost = async (req, res) => {
+const singlePost = async (req, res) => {
   try {
     const { postId } = req.body;
     const postData = await postModel.findById(postId);
@@ -78,4 +84,74 @@ const signlePost = async (req, res) => {
   }
 };
 
-export { addPost, listPost, signlePost, removePost };
+const updatePost = async (req, res) => {
+  try {
+    const { postId } = req.body;
+
+    // Extract the post ID from the array
+    if (!Array.isArray(postId) || postId.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid post ID" });
+    }
+    // const postIdValue = req.body.postId;
+
+    // Parse and validate tags and links
+    const tags = req.body.tags[0];
+    const links = req.body.links[0];
+    const contentArr = req.body.content[0];
+    const heading = req.body.heading[0]; // Access the first element of the heading array
+    const content = req.body.content[0]; // Access the first element of the heading array
+    const shortDescription = req.body.shortDescription[0]; // Access the first element of the description array
+    const tagsArr = tags
+      .split(",")
+      .map((tag) => tag.trim())
+      .filter(Boolean); // Remove empty strings
+    const linksArr = links
+      .split(",")
+      .map((link) => link.trim().replace(/\s+/g, "-"))
+      .filter(Boolean);
+
+    let mainImg = req.body.mainImg;
+
+    // Handle new image upload
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.filepath, {
+        resource_type: "image",
+      });
+      mainImg = result.secure_url; // New image URL
+    }
+
+    // Update the post in the database
+    const postData = await postModel.updateOne(
+      { _id: postId }, // Assuming `_id` corresponds to the ID in your database
+      {
+        $set: {
+          heading,
+          shortDescription,
+          mainImg,
+          tags: tagsArr,
+          links: linksArr,
+          content: contentArr,
+        },
+      }
+    );
+
+    if (postData.modifiedCount === 0) {
+      return res.status(200).json({
+        success: false,
+        message: "No changes made to the post",
+      });
+    }
+
+    res
+      .status(200)
+      .json({ success: true, message: "Post updated successfully!", postData });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
+
+export { addPost, listPost, singlePost, updatePost, removePost };

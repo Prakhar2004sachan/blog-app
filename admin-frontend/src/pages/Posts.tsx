@@ -7,13 +7,39 @@ import { backendUrl } from "../App";
 
 function Posts() {
   const [search, setSearch] = useState("");
+  const [listPosts, setListPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState([]);
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
-    // Optionally: filter posts dynamically based on the search
+  // Fetch the posts from the backend
+  const fetchPosts = async () => {
+    try {
+      const res = await axios.get(`${backendUrl}api/blog/list-posts`);
+      console.log(res.data);
+      setListPosts(res.data.posts); // Store posts in the state
+      setFilteredPosts(res.data.posts); // Initially set filteredPosts to the same as listPosts
+    } catch (error) {
+      console.error("Error fetching posts:", error);
+    }
   };
 
-  
+  console.log(listPosts);
+
+  // Handle search input
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value.toLowerCase();
+    setSearch(query);
+
+    // Filter posts based on the search query
+    const filtered = listPosts.filter((post) =>
+      post.heading.toLowerCase().includes(query)
+    );
+
+    setFilteredPosts(filtered); // Update filtered posts
+  };
+
+  useEffect(() => {
+    fetchPosts(); // Call the fetch function when the component mounts
+  }, []);
 
   return (
     <motion.div
@@ -22,22 +48,6 @@ function Posts() {
       transition={{ duration: 0.6 }}
       className="mt-3"
     >
-      {/* Search Bar */}
-      <motion.div
-        initial={{ scale: 0.9 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 0.4 }}
-        className="px-4 mt-6 flex gap-4 items-center border-2 border-black rounded-full"
-      >
-        <input
-          type="text"
-          className="w-full h-10 px-4 py-2 rounded-full outline-none"
-          placeholder="Search"
-          value={search}
-          onChange={handleSearch}
-        />
-        <RiSearch2Line className="text-xl cursor-pointer" />
-      </motion.div>
 
       {/* Heading */}
       <motion.h1
@@ -55,7 +65,7 @@ function Posts() {
         animate={{ opacity: 1 }}
         transition={{ duration: 0.7 }}
       >
-        <Blogs count={15} />
+        <Blogs count={filteredPosts.length} posts={filteredPosts} />
       </motion.div>
     </motion.div>
   );

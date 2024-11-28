@@ -5,6 +5,7 @@ const postSchema = new mongoose.Schema({
   shortDescription: { type: String, required: true },
   mainImg: { type: String }, // Single image URL
   tags: { type: Array, required: true }, // Array of tags
+  links: {type: Array},
   date: { type: Number, default: Date.now },
   content: { type: String, required: true },
 });

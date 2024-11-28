@@ -4,7 +4,8 @@ import {
   addPost,
   listPost,
   removePost,
-  signlePost,
+  singlePost,
+  updatePost,
 } from "../controllers/postController.js";
 
 const postRouter = express.Router();
@@ -12,7 +13,8 @@ const postRouter = express.Router();
 // Routes
 postRouter.post("/add", upload, addPost);
 postRouter.get("/list-posts", listPost); // List all posts
-postRouter.post("/sigle-post", signlePost); // single post
+postRouter.post("/single-post", singlePost); // single post
 postRouter.post("/remove", removePost); // Remove post
+postRouter.post("/update", upload, updatePost); // Update post
 
 export default postRouter;

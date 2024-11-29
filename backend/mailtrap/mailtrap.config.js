@@ -4,10 +4,10 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const TOKEN = process.env.MAILTRAP_TOKEN;
-const ENDPOINT = process.env.MAILTRAP_ENDPOINT;
+// const ENDPOINT = process.env.MAILTRAP_ENDPOINT;
 
 export const mailtrapclient = new MailtrapClient({
-  endpoint: ENDPOINT,
+  // endpoint: ENDPOINT,
   token: TOKEN,
 });
 

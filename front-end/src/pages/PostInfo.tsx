@@ -1,41 +1,64 @@
 import React, { useEffect, useState } from "react";
-import { FaAngleLeft } from "react-icons/fa";
-import { useRecoilValue } from "recoil";
-import { blogPostsAtom } from "../context/atom";
 import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { backendUrl } from "../App";
+import NavigationButtons from "../context/navigatingButtons";
+import PostContent from "../context/postcontent";
+import TagsSection from "../context/tagsSection";
+import { useAuthStore } from "../store/authStore";
 
 type BlogProps = {
-  id: string;
+  _id: string;
   mainImg: string;
-  title: string;
+  heading: string;
   tags: string[];
+  links: string[];
   shortDescription: string;
   date: string;
-  expand?: {
-    topic: string;
-    shortDescription: string;
-    img: string[];
-    details: string;
-  }[];
+  content: string;
 };
 
 function PostInfo() {
-  const { postId } = useParams();
-  const blogPosts: BlogProps[] = useRecoilValue(blogPostsAtom);
-  const [blog, setBlog] = useState<BlogProps | null>(null); // Initialize as null
+  const { postId } = useParams(); // Get postId from URL
+  console.log(postId);
+  const [blog, setBlog] = useState<BlogProps | null>(null);
+
+  const { isAuthenticated, checkAuth, user, logout } = useAuthStore();
+
   const navigate = useNavigate();
 
+  const fetchBlog = async () => {
+    try {
+      const res = await axios.get(`${backendUrl}api/blog/list-posts`);
+      console.log(res);
+      if (res.data.success) {
+        const post = res.data.posts.find((p: BlogProps) => p._id === postId);
+        console.log(post);
+        setBlog(post || null);
+      } else {
+        console.error("Error fetching blog:", res.data.message);
+      }
+    } catch (error) {
+      console.error("Error fetching blog:", error);
+    }
+  };
+
   useEffect(() => {
-    const foundBlog = blogPosts.find((i) => i.id === postId);
-    setBlog(foundBlog || null); // Set null if not found
-  }, [postId, blogPosts]);
+    fetchBlog();
+    checkAuth();
+  }, [postId]);
+  console.log(blog);
+
+  if (!isAuthenticated) {
+    navigate("/signup");
+  }
 
   if (!blog) {
     return (
       <div className="text-center mt-10">
         <p className="text-gray-500">Post not found.</p>
         <button
-          onClick={() => navigate("/posts")}
+          onClick={() => navigate("/")}
           className="mt-4 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
         >
           Go Back
@@ -44,97 +67,17 @@ function PostInfo() {
     );
   }
 
-  // const imgUrl = (imgArr: string[] | null | undefined): string => {
-  //   return imgArr?.[0] || "https://via.placeholder.com/150"; // Fallback image
-  // };
-
-  const idTag = (id: string): string => id.split(" ").join("-");
-
   return (
-    <div className="mt-5 w-full animate-fadeIn">
-      {/* Back to Blog */}
-      <div
-        onClick={() => navigate("/posts")}
-        className="bg-gray-200 text-xs w-[10rem] hover:bg-gray-300 rounded-lg flex gap-2 pl-2 py-2 items-center justify-start cursor-pointer transition duration-300"
-      >
-        <FaAngleLeft className="text-lg" />
-        <p>Back to blog</p>
-      </div>
-
-      {/* Tags Section */}
-      <div className="mt-10 flex items-center gap-4">
-        <div className="flex gap-2 items-center">
-          {blog.tags.map((tag, index) => (
-            <p
-              key={`tag-${index}`}
-              className="px-4 py-1 text-sm rounded-full bg-black text-white hover:bg-gray-800 transition duration-300"
-            >
-              {tag}
-            </p>
-          ))}
-        </div>
-        <p className="text-sm text-gray-400">{blog.date}</p>
-      </div>
-
-      {/* Post Content */}
-      <div className="mt-5">
-        {/* Title and Short Description */}
-        <h1 className="font-bold text-4xl sm:text-5xl lg:text-6xl leading-tight">
-          {blog.title}
-        </h1>
-        <p className="short-description mt-2 text-lg text-gray-600">
-          {blog.shortDescription}
-        </p>
-
-        {/* Image and Highlights */}
-        <div className="flex w-full justify-center sm:justify-between flex-col sm:flex-row gap-6 sm:gap-10 my-5">
-          <img
-            className="rounded-2xl w-full shadow-md hover:scale-105 transition duration-300"
-            src={blog.mainImg || "https://via.placeholder.com/150"}
-            alt={blog.title}
-          />
-          <div className="highlight sm:w-1/2 lg:w-[30rem] lg:px-10 lg:py-6 flex flex-col gap-2 py-3 px-4 border-2 shadow-xl rounded-xl animate-slideIn">
-            <h2 className="cursor-default text-xl font-semibold text-gray-600">
-              Topics mentioned in the post:
-            </h2>
-            <div>
-              {blog.expand?.map((item, index) => (
-                <a
-                  key={`highlight-${index}`}
-                  href={`#${idTag(item.topic)}`}
-                  className="text-gray-500 hover:text-black hover:underline"
-                >
-                  <p className="topics text-lg font-medium py-1">
-                    {item.topic}
-                  </p>
-                </a>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Full Details */}
-        {blog.expand?.map((item, index) => (
-          <div key={`description-${index}`} className="animate-fadeInSlow">
-            <h3 id={idTag(item.topic)} className="text-2xl mt-8 font-bold">
-              {item.topic}
-            </h3>
-            <div className="flex sm:flex-row flex-col gap-10 items-center my-5">
-              {item.img.map((img, imgIndex) => (
-                <img
-                  key={`img-${index}-${imgIndex}`}
-                  className="rounded-2xl w-full sm:w-1/2 shadow-md hover:scale-105 transition duration-300"
-                  src={img}
-                  alt={`${item.topic} visual`}
-                />
-              ))}
-            </div>
-            <p className="content mt-2 text-lg text-gray-600 leading-7">
-              {item.details}
-            </p>
-          </div>
-        ))}
-      </div>
+    <div className="mt-10 w-full animate-fadeIn">
+      <NavigationButtons navigateBack={() => navigate("/posts")} />
+      <TagsSection tags={blog.tags} date={blog.date} />
+      <PostContent
+        heading={blog.heading}
+        shortDescription={blog.shortDescription}
+        mainImg={blog.mainImg}
+        content={blog.content}
+        links={blog.links}
+      />
     </div>
   );
 }

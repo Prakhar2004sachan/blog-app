@@ -7,6 +7,7 @@ import postRouter from "./routes/postRouter.js"; // Routes for posts
 import aboutRouter from "./routes/aboutRoute.js";
 import imgRouter from "./routes/imgRoute.js";
 import authRouter from "./routes/authRoute.js";
+import cookieParser from "cookie-parser";
 
 // Initialize App
 const app = express();
@@ -17,9 +18,10 @@ connectDB();
 connectCloudinary();
 
 // Middleware
-app.use(cors());
+app.use(cors({ origin: "http://localhost:5173", credentials: true }));
 // app.use(bodyParser.json());
 app.use(express.json()); // Parse JSON bodies
+app.use(cookieParser()); // allow to parse cookie
 app.use(express.urlencoded({ extended: true })); // Parse URL-encoded bodies
 
 // API Routes

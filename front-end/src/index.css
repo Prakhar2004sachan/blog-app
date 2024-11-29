@@ -34,3 +34,8 @@
 .about li{
     padding-top: .5rem;
 }
+
+.parse h2{
+    font-size: 32px;
+    font-weight: bold;
+}

@@ -2,6 +2,8 @@ import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { signup } from "../../../backend/controllers/authController";
+import { emit } from "process";
 import { useAuthStore } from "../store/authStore";
 
 type Inputs = {
@@ -10,19 +12,19 @@ type Inputs = {
   password: string;
 };
 
-function Login() {
+function Signup() {
+  const { signup, error, isLoading } = useAuthStore();
   const navigate = useNavigate();
-  const { login, error, isLoading } = useAuthStore();
-
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    console.log(data);
     try {
-      await login(data.email, data.password, data.name);
-      navigate('/')
+      await signup(data.email, data.password, data.name);
+      navigate("/verify-email");
     } catch (error) {
       console.log(error);
     }
@@ -35,7 +37,9 @@ function Login() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <h1 className="sm:text-5xl text-3xl font-bold text-center mb-8">Login</h1>
+      <h1 className="sm:text-5xl text-3xl font-bold text-center mb-8">
+        Sign Up
+      </h1>
       <form
         className="flex flex-col items-center justify-center gap-6"
         onSubmit={handleSubmit(onSubmit)}
@@ -47,6 +51,15 @@ function Login() {
           viewport={{ once: true }}
           transition={{ delay: 0.2 }}
         >
+          <motion.input
+            key="name-input"
+            className="h-12 px-4 outline-none border-2 border-black rounded-lg focus:border-blue-500 transition-all duration-300"
+            placeholder="Enter Your Full Name"
+            {...register("name")}
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+          />
           <input
             className="h-12 px-4 outline-none border-2 border-black rounded-lg focus:border-blue-500 transition-all duration-300"
             placeholder="Enter Your Email"
@@ -72,18 +85,18 @@ function Login() {
           type="submit"
           whileHover={{ scale: 1.05 }}
         >
-          Login
+          Sign up
         </motion.button>
         <motion.p
-          onClick={() => navigate("/signup")}
+          onClick={() => navigate("/login")}
           className="text-center cursor-pointer text-blue-500 hover:underline"
           whileHover={{ scale: 1.05 }}
         >
-          Register New Account
+          Already have an account?
         </motion.p>
       </form>
     </motion.div>
   );
 }
 
-export default Login;
+export default Signup;

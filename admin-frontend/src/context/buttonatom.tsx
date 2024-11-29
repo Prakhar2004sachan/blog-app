@@ -5,26 +5,30 @@ type ButtonAtomProps = {
   onClick?: () => void;
   icon?: JSX.Element;
   type?: "button" | "submit" | "reset";
-  color: string;
+  color?: string; // Optional with a default value
+  className?: string; // For custom styles
+  ariaLabel?: string; // Accessibility
 };
 
 const ButtonAtom: React.FC<ButtonAtomProps> = ({
   label,
   onClick,
   icon,
-  color,
   type = "button",
+  color = "bg-black", // Default color
+  className = "",
+  ariaLabel,
 }) => (
-  <div className={`${color} py-2 text-white flex items-center justify-center px-4 rounded-full`}>
-    {icon && <span className="mr-2 text-2xl">{icon}</span>}
-    <button
-      type={type}
-      onClick={onClick}
-      className=" text-white text-center"
-    >
-      {label}
-    </button>
-  </div>
+  <button
+    type={type}
+    onClick={onClick}
+    className={`flex items-center justify-center gap-2 ${color} py-2 px-4 text-white rounded-full w-[7rem] sm:w-[10rem] text-sm ${className}`}
+    aria-label={ariaLabel || label}
+    title={ariaLabel || label} // Adds tooltip-like functionality
+  >
+    {icon && <span className="text-2xl">{icon}</span>}
+    <span>{label}</span>
+  </button>
 );
 
 export default ButtonAtom;

@@ -14,7 +14,7 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
   navigateEdit,
   deletePost,
 }) => (
-  <div className="flex items-center justify-between">
+  <div className="flex flex-col sm:flex-row gap-5 sm:items-center justify-between">
     <ButtonAtom
       label="Back to blog"
       color="bg-black"

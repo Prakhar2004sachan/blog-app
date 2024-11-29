@@ -1,21 +1,41 @@
-import React, { useState } from "react";
+import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { motion } from "framer-motion";
+import axios from "axios";
+import { backendUrl } from "../App";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 type Inputs = {
-  name?: string;
   email: string;
   password: string;
 };
 
 function Login() {
-  const [login, setLogin] = useState(true);
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    try {
+      const res = await axios.post(`${backendUrl}api/auth/login`, {
+        email: data.email,
+        password: data.password,
+      });
+      console.log("Login Successful:", res.data);
+      toast.success(res.data.message); // Display a success message
+      navigate('/')
+    } catch (error: any) {
+      console.error(
+        "Login Failed:",
+        error.response?.data?.message || error.message
+      );
+      alert(error.response?.data?.message || "An error occurred");
+    }
+  };
 
   return (
     <motion.div
@@ -24,9 +44,7 @@ function Login() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
     >
-      <h1 className="sm:text-5xl text-3xl font-bold text-center mb-8">
-        Login
-      </h1>
+      <h1 className="sm:text-5xl text-3xl font-bold text-center mb-8">Login</h1>
       <form
         className="flex flex-col items-center justify-center gap-6"
         onSubmit={handleSubmit(onSubmit)}
@@ -41,7 +59,13 @@ function Login() {
           <input
             className="h-12 px-4 outline-none border-2 border-black rounded-lg focus:border-blue-500 transition-all duration-300"
             placeholder="Enter Your Email"
-            {...register("email", { required: "Email is required" })}
+            {...register("email", {
+              required: "Email is required",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "Invalid email format",
+              },
+            })}
           />
           {errors.email && (
             <span className="text-red-500 text-sm">{errors.email.message}</span>

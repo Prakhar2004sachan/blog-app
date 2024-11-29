@@ -16,6 +16,8 @@ type BlogPost = {
   }[];
 };
 
+
+
 export const blogPostsAtom = atom<BlogPost[]>({
   key: "blogPosts",
   default: posts.flat(), // Flatten the nested array

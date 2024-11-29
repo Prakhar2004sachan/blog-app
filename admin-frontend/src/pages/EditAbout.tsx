@@ -22,7 +22,11 @@ function EditAbout() {
     handleSubmit,
     setValue,
     formState: { errors },
+    watch,
   } = useForm<Input>();
+
+  // Watch the heading to debug if it's captured correctly
+  const heading = watch("heading");
 
   // Jodit Editor Configuration
   const config = useMemo(
@@ -44,7 +48,6 @@ function EditAbout() {
           setData({ heading: aboutData.heading, content: aboutData.content });
           setContent(aboutData.content || "");
           setValue("heading", aboutData.heading || ""); // Set form value
-          console.log(aboutData);
         } else {
           throw new Error("Failed to fetch data");
         }
@@ -60,6 +63,7 @@ function EditAbout() {
 
   // Handle form submission
   const onSubmit: SubmitHandler<Input> = async (formData) => {
+    console.log(formData);
     if (!content) {
       setError("Content cannot be empty");
       return;
@@ -121,9 +125,10 @@ function EditAbout() {
       >
         {/* Heading Input */}
         <FormInput
-          placeholder={data.heading}
+          placeholder={data.heading || "Enter Heading"}
           {...register("heading", { required: "Heading is required" })}
           error={errors.heading?.message}
+          onChange={(e) => setValue("heading", e.target.value)} // Update the form value on input change
         />
         {/* Content Editor */}
         <EditorAtom

@@ -1,5 +1,5 @@
 import React from "react";
-import TagAtom from "../context/tagatom";
+import TagAtom from "./tags"
 
 type TagsSectionProps = {
   tags: string[];

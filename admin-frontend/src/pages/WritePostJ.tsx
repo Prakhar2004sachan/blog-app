@@ -16,6 +16,7 @@ function WritePostJ() {
   const editor = useRef(null);
   const [content, setContent] = useState("");
   const [img, setImg] = useState<File | null>(null); // For storing the uploaded image file
+  const [isLoading, setIsLoading] = useState(false); // Track upload state
 
   const {
     register,
@@ -23,12 +24,13 @@ function WritePostJ() {
     formState: { errors },
   } = useForm<Input>();
 
-
   const onSubmit: SubmitHandler<Input> = async (data) => {
     if (!img) {
       alert("Please upload an image");
       return;
     }
+
+    setIsLoading(true); // Set loading state to true during upload
 
     // Create FormData to handle both text and file uploads
     const formData = new FormData();
@@ -56,6 +58,8 @@ function WritePostJ() {
     } catch (error) {
       console.error("Error submitting post:", error);
       alert("An error occurred. Please try again.");
+    } finally {
+      setIsLoading(false); // Reset loading state after upload
     }
   };
 
@@ -71,6 +75,7 @@ function WritePostJ() {
           placeholder="Enter Heading for the blog post"
           className="w-full h-[3rem] border-2 border-black px-4 py-2 rounded-lg"
           {...register("heading", { required: "Heading is required" })}
+          disabled={isLoading} // Disable input when loading
         />
         {errors.heading && (
           <p className="text-red-500">{errors.heading.message}</p>
@@ -82,6 +87,7 @@ function WritePostJ() {
           {...register("shortDescription", {
             required: "Short Description is required",
           })}
+          disabled={isLoading} // Disable input when loading
         />
         {errors.shortDescription && (
           <p className="text-red-500">{errors.shortDescription.message}</p>
@@ -91,6 +97,7 @@ function WritePostJ() {
           placeholder="Enter Tags (comma separated)"
           className="w-full h-[3rem] border-2 border-black px-4 py-2 rounded-lg"
           {...register("tags", { required: "Tags are required" })}
+          disabled={isLoading} // Disable input when loading
         />
         {errors.tags && <p className="text-red-500">{errors.tags.message}</p>}
 
@@ -98,6 +105,7 @@ function WritePostJ() {
           placeholder="Enter Learnings (comma separated)"
           className="w-full h-[3rem] border-2 border-black px-4 py-2 rounded-lg"
           {...register("learnings", { required: "Tags are required" })}
+          disabled={isLoading} // Disable input when loading
         />
         {errors.learnings && (
           <p className="text-red-500">{errors.learnings.message}</p>
@@ -115,6 +123,7 @@ function WritePostJ() {
               }
             }}
             required
+            disabled={isLoading} // Disable file input when loading
           />
         </div>
 
@@ -123,11 +132,14 @@ function WritePostJ() {
             ref={editor}
             value={content}
             onChange={(newContent) => setContent(newContent)}
+            config={{ readonly: isLoading }} // Make editor readonly during upload
           />
         </div>
 
-        <div className="bg-black text-white px-4 py-2 text-center rounded-full w-[5rem]">
-          <button type="submit">Submit</button>
+        <div className="bg-black text-white px-4 py-2 text-center rounded-full w-[15rem]">
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Uploading..." : "Submit"}
+          </button>
         </div>
       </form>
     </div>

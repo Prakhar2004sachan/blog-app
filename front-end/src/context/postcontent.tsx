@@ -1,8 +1,9 @@
 import React from "react";
-import ImageAtom from "../context/imageatom";
-import HeadingAtom from "../context/headingatom";
+
 import parse from "html-react-parser";
-import LinksAtom from "./linksatom";
+import LinksAtom from "./linksatom.tsx";
+import ImageAtom from "./imageatom.tsx";
+import HeadingAtom from "./headingatom.tsx";
 
 type PostContentProps = {
   heading: string;

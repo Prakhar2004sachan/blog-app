@@ -62,6 +62,24 @@ const listPost = async (req, res) => {
   }
 };
 
+// Selected tag
+const selectTag= async (req, res) => {
+  try {
+    const { tag } = req.query; // Get the tag from the query parameters
+    let query = {};
+
+    if (tag && tag !== "All Categories") {
+      query = { tags: tag }; // Filter posts that have the specified tag
+    }
+
+    const posts = await postModel.find(query).sort({ date: -1 }); // Latest posts first
+    res.json({ success: true, posts });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+
 // remove post
 const removePost = async (req, res) => {
   try {
@@ -154,4 +172,4 @@ const updatePost = async (req, res) => {
 
 
 
-export { addPost, listPost, singlePost, updatePost, removePost };
+export { addPost, listPost, singlePost, updatePost, removePost, selectTag };

@@ -30,14 +30,16 @@ const Blogs = () => {
 
   // Handle search input change
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const query = e.target.value.toLowerCase();
-    setSearch(query); // Update search query state
+     const query = e.target.value.toLowerCase();
+     setSearch(query);
 
-    // Filter posts based on search query
-    const filtered = listPosts.filter((post) =>
-      post.heading.toLowerCase().includes(query)
-    );
-    setFilteredPosts(filtered); // Update filtered posts
+     const filtered = listPosts.filter(
+       (post) =>
+         post.heading.toLowerCase().includes(query) ||
+         post.shortDescription.toLowerCase().includes(query) ||
+         post.tags.some((tag) => tag.toLowerCase().includes(query)) // Search within tags array
+     );
+     setFilteredPosts(filtered);
   };
 
   useEffect(() => {

@@ -1,0 +1,14 @@
+.parsed-about-html h2{
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.parsed-about-html img{
+    margin: 1rem 0;
+}
+
+.parsed-about-html p{
+    margin: 1rem 0;
+    font-size: 18px;
+    color: rgb(152, 149, 149);
+}

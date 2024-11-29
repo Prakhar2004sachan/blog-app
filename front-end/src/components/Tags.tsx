@@ -1,25 +1,29 @@
-import React, { useState } from "react";
+import React from "react";
 import { RxCross2 } from "react-icons/rx";
 import { GoSingleSelect } from "react-icons/go";
 
-function Tags() {
+type TagsProps = {
+  selectedTag: string;
+  setSelectedTag: (tag: string) => void;
+};
+
+function Tags({ selectedTag, setSelectedTag }: TagsProps) {
   const tags: string[] = [
     "All Categories",
-    "C++",
-    "Python",
-    "JavaScript",
-    "Go",
+    "c++",
+    "python",
+    "javaScript",
+    "react",
     "C",
-    "C#",
-    "Node",
-    "Next",
+    "c#",
+    "node",
+    "next",
   ];
 
-  const [isDropdownOpen, setDropdownOpen] = useState(false);
-  const [selectedTag, setSelectedTag] = useState("All Categories");
+  const [isDropdownOpen, setDropdownOpen] = React.useState(false);
 
   const handleSelectTag = (tag: string) => {
-    setSelectedTag(tag);
+    setSelectedTag(tag); // Update the selected tag in the parent component
     setDropdownOpen(false);
   };
 

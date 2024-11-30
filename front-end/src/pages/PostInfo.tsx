@@ -5,7 +5,6 @@ import { backendUrl } from "../App";
 import NavigationButtons from "../context/navigatingButtons";
 import PostContent from "../context/postcontent";
 import TagsSection from "../context/tagsSection";
-import { useAuthStore } from "../store/authStore";
 
 type BlogProps = {
   _id: string;
@@ -23,7 +22,6 @@ function PostInfo() {
   console.log(postId);
   const [blog, setBlog] = useState<BlogProps | null>(null);
 
-  const { isAuthenticated, checkAuth, user, logout } = useAuthStore();
 
   const navigate = useNavigate();
 
@@ -37,28 +35,24 @@ function PostInfo() {
         setBlog(post || null);
       } else {
         console.error("Error fetching blog:", res.data.message);
+        navigate("/posts");
       }
     } catch (error) {
       console.error("Error fetching blog:", error);
+      navigate("/posts");
     }
   };
 
   useEffect(() => {
     fetchBlog();
-    checkAuth();
   }, [postId]);
-  console.log(blog);
-
-  if (!isAuthenticated) {
-    navigate("/signup");
-  }
 
   if (!blog) {
     return (
       <div className="text-center mt-10">
         <p className="text-gray-500">Post not found.</p>
         <button
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/posts")}
           className="mt-4 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
         >
           Go Back

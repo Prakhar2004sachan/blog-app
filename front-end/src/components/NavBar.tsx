@@ -5,10 +5,11 @@ import { FaHatCowboy } from "react-icons/fa";
 import { HiMiniBars4 } from "react-icons/hi2";
 import OutsideClickHandler from "react-outside-click-handler";
 import { useAuthStore } from "../store/authStore";
+import { toast } from "react-toastify";
 
 function NavBar() {
   const navLinks: string[] = ["Home", "Posts", "About", "Contact"];
-  const { isAuthenticated, checkAuth, user, logout } = useAuthStore();
+  const { isAuthenticated, checkAuth, logout } = useAuthStore();
 
   const routes = (link: string) => {
     const address = link.toLowerCase();
@@ -18,6 +19,7 @@ function NavBar() {
 
   const handleLogout = () => {
     logout();
+    toast.success("Logout successfully");
   };
 
   useEffect(() => {

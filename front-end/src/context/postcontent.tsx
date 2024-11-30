@@ -35,7 +35,7 @@ const PostContent: React.FC<PostContentProps> = ({
           <h1 className="text-2xl font-bold underline">Content of the blog</h1>
           <div className="flex mt-3 flex-col gap-4 px-6 py-2">
             {links.map((i, inx) => (
-              <div className="flex gap-6 items-center justify-start">
+              <div key={inx} className="flex gap-6 items-center justify-start">
                 <div className="bg-black w-2 h-2 rounded-full"></div>
                 <LinksAtom link={i} key={inx} />
               </div>

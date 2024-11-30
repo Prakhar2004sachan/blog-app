@@ -51,8 +51,6 @@ export const signup = async (req, res) => {
         password: undefined,
       },
     });
-
-    res.send("Signup route");
   } catch (error) {
     console.log(error);
     res.status(432).json({ success: false, message: error.message });
@@ -60,38 +58,38 @@ export const signup = async (req, res) => {
 };
 
 export const verifyEmail = async (req, res) => {
-  // six digit code verification
-  const { code } = req.body;
   try {
+    const { code } = req.body;
+
+    // Log received code
+    console.log("Received verification code:", code);
+
+    // Find user with matching verification token and ensure token is not expired
     const user = await userModel.findOne({
       verificationToken: code,
-      verificationTokenExpiresAt: { $gt: Date.now() },
+      verificationTokenExpiresAt: { $gt: Date.now() }, // Check for expiration
     });
 
+    // Log user query result
+    console.log("User Query Result:", user);
+
     if (!user) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid or expired verification code",
-      });
+      return res
+        .status(400)
+        .json({ message: "Invalid or expired verification code." });
     }
 
+    // Mark email as verified
     user.isVerified = true;
-    user.verificationToken = undefined;
+    user.verificationToken = undefined; // Clear token
     user.verificationTokenExpiresAt = undefined;
     await user.save();
 
-    await sendWelcomeEmail(user.email, user.name);
-    res.status(200).json({
-      success: true,
-      message: "Email verified successfully",
-      user: {
-        ...user._doc,
-        password: undefined,
-      },
-    });
+    // Respond with success
+    return res.status(200).json({ message: "Email verified successfully." });
   } catch (error) {
-    console.log(error);
-    res.status(460).json({ success: false, message: error.message });
+    console.error("Error in verifyEmail API:", error);
+    return res.status(500).json({ message: "Internal Server Error." });
   }
 };
 

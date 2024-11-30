@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { motion } from "framer-motion";
 
@@ -11,7 +11,42 @@ type Inputs = {
 
 function Contact() {
   const { register, handleSubmit } = useForm<Inputs>();
-  const onSubmit: SubmitHandler<Inputs> = (data) => console.log(data);
+  const [result, setResult] = useState("");
+
+  const onSubmit: SubmitHandler<Inputs> = async (data) => {
+    setResult("Sending...");
+
+    // Prepare the data to be sent
+    const formData = {
+      access_key: "756ce1bf-cedf-46d6-b6e1-b399146fb430",
+      name: data.name,
+      email: data.email,
+      subject: data.subject,
+      message: data.message,
+    };
+
+    try {
+      // Fetch API call
+      const response = await fetch("https://api.web3forms.com/submit", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData), // Stringify the form data
+      });
+
+      const responseData = await response.json();
+      if (responseData.success) {
+        setResult("Form Submitted Successfully");
+      } else {
+        console.log("Error", responseData);
+        setResult(responseData.message);
+      }
+    } catch (error) {
+      console.error("Error submitting form:", error);
+      setResult("An error occurred. Please try again later.");
+    }
+  };
 
   return (
     <motion.div
@@ -37,12 +72,13 @@ function Contact() {
           <input
             className="h-12 px-4 outline-none border-2 border-black rounded-lg focus:border-blue-500 transition-all duration-300"
             placeholder="Enter Your Full Name"
-            {...register("name")}
+            {...register("name", { required: true })}
           />
           <input
             className="h-12 px-4 outline-none border-2 border-black rounded-lg focus:border-blue-500 transition-all duration-300"
             placeholder="Enter Your Email"
             required
+            type="email"
             {...register("email", { required: true })}
           />
         </motion.div>
@@ -57,22 +93,24 @@ function Contact() {
             className="h-12 w-full px-4 outline-none border-2 border-black rounded-lg focus:border-blue-500 transition-all duration-300"
             placeholder="Enter Subject"
             required
-            {...register("subject")}
+            {...register("subject", { required: true })}
           />
           <textarea
             className="w-full px-4 py-3 outline-none border-2 border-black rounded-lg focus:border-blue-500 transition-all duration-300"
             placeholder="Enter Your Message"
             rows={5}
             required
-            {...register("message")}
+            {...register("message", { required: true })}
           />
         </motion.div>
         <motion.input
           className="bg-black text-white px-6 py-3 rounded-full cursor-pointer hover:bg-blue-500 transition duration-500"
           type="submit"
+          value="Submit"
           whileHover={{ scale: 1.05 }}
         />
       </form>
+      <div className="mt-5 font-medium text-center">{result}</div>
     </motion.div>
   );
 }

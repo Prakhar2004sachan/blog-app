@@ -27,7 +27,7 @@ export const sendVerificationEmail = async (email, verificationToken) => {
   }
 };
 
-export const sendWelcomeEmail = async (email, name) => {
+export const sendWelcomeEmail = async (email) => {
   const recipient = [{ email }];
 
   try {

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React from "react";
 import {
   FaHatCowboy,
   FaInstagram,
@@ -7,11 +7,8 @@ import {
   FaGithub,
   FaFacebookSquare,
 } from "react-icons/fa";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const data = [
   {
@@ -35,65 +32,67 @@ const data = [
 ];
 
 const Footer = () => {
-  const footerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (footerRef.current) {
-      // Ensure the ref is defined
-      const elements = footerRef.current.querySelectorAll(".footer-item");
-      gsap.from(elements, {
-        opacity: 0,
-        y: 50,
-        duration: 1,
-        stagger: 0.2,
-        scrollTrigger: {
-          trigger: footerRef.current,
-          start: "top bottom",
-          toggleActions: "play none none none",
-        },
-      });
-    }
-  }, []);
+  const fadeUpVariant = {
+    hidden: { opacity: 0, y: 50 },
+    visible: { opacity: 1, y: 0 },
+  };
 
   return (
-    <div
-      ref={footerRef}
+    <motion.div
+      initial="hidden"
+      whileInView="visible"
+      viewport={{ once: true, amount: 0.2 }}
       className="grid grid-cols-1 gap-6 justify-center sm:gap-4 py-[2rem]"
     >
-      <div className="grid grid-cols-1 sm:grid-cols-2 justify-items-start border-b-2 border-b-gray-300 py-4">
-        <div className="mt-5 justify-self-center items-start py-2 footer-item">
+      <motion.div
+        variants={fadeUpVariant}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        className="grid grid-cols-1 sm:grid-cols-2 justify-items-start border-b-2 border-b-gray-300 py-4"
+      >
+        <div className="mt-5 justify-self-center items-start py-2">
           <FaHatCowboy className="cursor-pointer text-4xl" />
         </div>
-        <div className="w-full grid grid-cols-2 justify-items-start mt-5 md:justify-items-center md:grid-cols-3 gap-[2rem]">
+        <motion.div
+          variants={fadeUpVariant}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="w-full grid grid-cols-2 justify-items-start mt-5 md:justify-items-center md:grid-cols-3 gap-[2rem]"
+        >
           {data.map((i, inx) => (
-            <div
+            <motion.div
               key={inx}
-              className={`footer-item ${
-                i.title == "Info"
+              variants={fadeUpVariant}
+              transition={{ duration: 0.6, delay: 0.2 * inx }}
+              className={`${
+                i.title === "Info"
                   ? "justify-self-end sm:justify-self-center"
-                  : i.title == "Trends"
+                  : i.title === "Trends"
                   ? "lg:justify-self-end"
                   : "justify-self-start"
               }`}
             >
               <h3 className="font-bold cursor-default">{i.title}</h3>
-              <div className={`text-gray-600 flex flex-col py-1`}>
+              <div className="text-gray-600 flex flex-col py-1">
                 <Link to="/" className="py-1 hover:text-black">
-                  <a href="#">{i.page1}</a>
+                  {i.page1}
                 </Link>
+
                 <Link to="/" className="py-1 hover:text-black">
-                  <a href="#">{i.page2}</a>
+                  {i.page1}
                 </Link>
+
                 <Link to="/" className="py-1 hover:text-black">
-                  <a href="#">{i.page3}</a>
+                  {i.page1}
                 </Link>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
-        <div></div>
+        </motion.div>
         {/* Socials */}
-        <div className="md:mt-8 lg:justify-center lg:text-start lg:flex flex gap-6 font-bold py-5 footer-item flex-col sm:px-4">
+        <motion.div
+          variants={fadeUpVariant}
+          transition={{ duration: 0.6, delay: 0.6 }}
+          className="md:mt-8 lg:justify-center lg:text-start lg:flex flex gap-6 font-bold py-5 flex-col sm:px-4"
+        >
           <h3>Social</h3>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-10 items-center text-xl 2xl:text-2xl">
             <FaInstagram className="cursor-pointer" />
@@ -102,12 +101,16 @@ const Footer = () => {
             <FaGithub className="cursor-pointer" />
             <FaFacebookSquare className="cursor-pointer" />
           </div>
-        </div>
-      </div>
-      <p className="text-center mt-3 text-gray-600 footer-item tracking-widest">
+        </motion.div>
+      </motion.div>
+      <motion.p
+        variants={fadeUpVariant}
+        transition={{ duration: 0.6, delay: 0.8 }}
+        className="text-center mt-3 text-gray-600 tracking-widest"
+      >
         Copyright © 2024 All rights reserved
-      </p>
-    </div>
+      </motion.p>
+    </motion.div>
   );
 };
 

@@ -3,6 +3,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
+import { toast } from "react-toastify";
 
 type Inputs = {
   name?: string;
@@ -22,7 +23,8 @@ function Login() {
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
       await login(data.email, data.password, data.name);
-      navigate('/')
+      navigate("/");
+      toast.success("Login Successfully");
     } catch (error) {
       console.log(error);
     }
@@ -66,6 +68,8 @@ function Login() {
               {errors.password.message}
             </span>
           )}
+
+          {error && <p className="text-red-500 font-semibold mb-2">{error}</p>}
         </motion.div>
         <motion.button
           className="bg-black text-white px-6 py-3 rounded-full cursor-pointer hover:bg-gray-700 transition duration-500"

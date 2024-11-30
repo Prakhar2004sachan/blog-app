@@ -28,7 +28,7 @@ const Blog: React.FC<BlogProps> = ({
       >
         <img
           src={mainImg}
-          className="rounded-2xl h-[15rem]"
+          className="rounded-2xl"
           alt={`Post titled ${title}`}
         />
         <div className="mt-6 px-2 flex flex-col">

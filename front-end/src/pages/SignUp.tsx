@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
-import { signup } from "../../../backend/controllers/authController";
-import { emit } from "process";
+import { Loader } from "lucide-react";
 import { useAuthStore } from "../store/authStore";
+import PasswordStrengthMeter from "../components/PasswordStrength";
 
 type Inputs = {
   name?: string;
@@ -13,20 +13,34 @@ type Inputs = {
 };
 
 function Signup() {
-  const { signup, error, isLoading } = useAuthStore();
+  const { signup, isLoading } = useAuthStore();
+  const [password, setPassword] = useState("");
   const navigate = useNavigate();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
+    setError, // This will allow us to manually set errors
   } = useForm<Inputs>();
+
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
-    console.log(data);
+    if (password.length < 6) {
+      setError("password", {
+        type: "manual",
+        message: "Password must be at least 6 characters",
+      });
+      return;
+    }
+
     try {
-      await signup(data.email, data.password, data.name);
+      await signup(data.email, password, data.name);
+      setPassword(""); // Reset password after successful signup
       navigate("/verify-email");
     } catch (error) {
       console.log(error);
+      // Handle the error, e.g., display a message
+      alert("Signup failed. Please try again.");
     }
   };
 
@@ -56,9 +70,6 @@ function Signup() {
             className="h-12 px-4 outline-none border-2 border-black rounded-lg focus:border-blue-500 transition-all duration-300"
             placeholder="Enter Your Full Name"
             {...register("name")}
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
           />
           <input
             className="h-12 px-4 outline-none border-2 border-black rounded-lg focus:border-blue-500 transition-all duration-300"
@@ -73,7 +84,9 @@ function Signup() {
             className="h-12 px-4 outline-none border-2 border-black rounded-lg focus:border-blue-500 transition-all duration-300"
             placeholder="Enter Password"
             {...register("password", { required: "Password is required" })}
+            onChange={(e) => setPassword(e.target.value)}
           />
+          <PasswordStrengthMeter password={password} />
           {errors.password && (
             <span className="text-red-500 text-sm">
               {errors.password.message}
@@ -85,7 +98,11 @@ function Signup() {
           type="submit"
           whileHover={{ scale: 1.05 }}
         >
-          Sign up
+          {isLoading ? (
+            <Loader className="animate-spin mx-auto" size={24} />
+          ) : (
+            "Sign Up"
+          )}
         </motion.button>
         <motion.p
           onClick={() => navigate("/login")}

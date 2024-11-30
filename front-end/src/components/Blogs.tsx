@@ -74,7 +74,7 @@ const Blogs = () => {
       </div>
 
       {/* Displaying posts */}
-      <div className="mt-[2rem] w-full mb-[2rem] sm:grid sm:grid-cols-2 gap-4 xl:grid-cols-3">
+      <div className="display-posts mt-[2rem] w-full mb-[2rem] flex flex-col items-start sm:grid sm:grid-cols-2 gap-4 xl:grid-cols-3 place-items-center">
         {currentPosts.length > 0 ? (
           currentPosts.map((post) => (
             <Blog

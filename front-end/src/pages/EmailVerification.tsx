@@ -5,36 +5,25 @@ import { toast } from "react-toastify";
 import { useAuthStore } from "../store/authStore";
 
 function EmailVerification() {
-  const [code, setCode] = useState(["", "", "", "", "", ""]);
+  const [code, setCode] = useState("");
   const inputRefs = useRef([]);
   const navigate = useNavigate();
-
   const { error, isLoading, verifyEmail, clearError } = useAuthStore();
 
   const handleChange = (index, value) => {
-    const newCode = [...code];
+    let newCode = code.split("");
 
     if (value.length > 1) {
-      // Handle pasted content
-      const pastedCode = value.slice(0, 6).split("");
-      pastedCode.forEach((digit, i) => {
-        if (i < 6) newCode[i] = digit;
-      });
-      setCode(newCode);
-
-      // Focus next empty field
-      const firstEmptyIndex = pastedCode.findIndex((digit) => !digit);
-      inputRefs.current[firstEmptyIndex >= 0 ? firstEmptyIndex : 5]?.focus();
+      newCode = value.slice(0, 6); // Handle pasted content
     } else {
-      // Single character input
-      newCode[index] = value;
-      setCode(newCode);
-
-      // Move to the next input if a value is entered
-      if (value && index < 5) {
-        inputRefs.current[index + 1]?.focus();
-      }
+      newCode[index] = value; // Update the digit at index
     }
+
+    setCode(newCode.join(""));
+
+    // Auto-focus on the next empty input
+    const nextIndex = value && index < 5 ? index + 1 : index;
+    inputRefs.current[nextIndex]?.focus();
 
     // Clear error on input change
     if (error) clearError();
@@ -48,26 +37,14 @@ function EmailVerification() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const verificationCode = code.join("");
-
     try {
-      await verifyEmail(verificationCode);
+      await verifyEmail(code);
       toast.success("Email verified successfully");
       navigate("/");
     } catch (err) {
-      console.error(err);
       toast.error(err.message || "Failed to verify email.");
     }
   };
-
-  useEffect(() => {
-    // Auto-submit when all inputs are filled
-    if (code.every((digit) => digit !== "")) {
-      (async () => {
-        await handleSubmit(new Event("submit"));
-      })();
-    }
-  }, [code]);
 
   return (
     <div className="mt-10">
@@ -83,13 +60,13 @@ function EmailVerification() {
         </p>
         <form onSubmit={handleSubmit} className="space-y-6 mt-3">
           <div className="flex gap-1 sm:gap-4 justify-between px-20">
-            {code.map((digit, index) => (
+            {Array.from({ length: 6 }).map((_, index) => (
               <input
                 key={index}
                 ref={(el) => (inputRefs.current[index] = el)}
                 type="text"
                 maxLength="1"
-                value={digit}
+                value={code[index] || ""}
                 onChange={(e) => handleChange(index, e.target.value)}
                 onKeyDown={(e) => handleKeyDown(index, e)}
                 className="w-12 h-12 text-center text-2xl font-bold bg-gray-200 text-black border-gray-700 rounded-lg focus:border-gray-950 focus:outline-none"
@@ -101,12 +78,12 @@ function EmailVerification() {
               {error}
             </p>
           )}
-          <div className="flex justify-center items-center"> 
+          <div className="flex justify-center items-center">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               type="submit"
-              disabled={isLoading || code.some((digit) => !digit)}
+              disabled={isLoading || code.length < 6}
               className="w-[15rem] bg-gradient-to-r from-green-500 to-emerald-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:from-green-600 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 disabled:opacity-50"
             >
               {isLoading ? "Verifying..." : "Verify Email"}

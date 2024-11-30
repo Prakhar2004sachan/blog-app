@@ -58,7 +58,7 @@ function PostInfo() {
   if (!blog) {
     return (
       <div className="text-center mt-10">
-        <p className="text-gray-500">Post not found.</p>
+        <p className="text-gray-900">Post not found.</p>
         <button
           onClick={() => navigate("/")}
           className="mt-4 px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"

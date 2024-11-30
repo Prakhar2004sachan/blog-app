@@ -79,13 +79,13 @@ const Footer = () => {
               <h3 className="font-bold cursor-default">{i.title}</h3>
               <div className={`text-gray-600 flex flex-col py-1`}>
                 <Link to="/" className="py-1 hover:text-black">
-                  <a href="#">{i.page1}</a>
+                  {i.page1}
                 </Link>
                 <Link to="/" className="py-1 hover:text-black">
-                  <a href="#">{i.page2}</a>
+                  {i.page2}
                 </Link>
                 <Link to="/" className="py-1 hover:text-black">
-                  <a href="#">{i.page3}</a>
+                  {i.page3}
                 </Link>
               </div>
             </div>

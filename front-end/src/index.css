@@ -8,6 +8,19 @@
     padding: 0;
 }
 
+::-webkit-scrollbar {
+  display: none;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  height: 100%;
+   overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch; /* For smoother scrolling */
+}
+
 .nav-desk a .active p{
     color: blue !important;
     background-color: aqua;

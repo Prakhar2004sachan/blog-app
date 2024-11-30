@@ -44,7 +44,7 @@ const PostContent: React.FC<PostContentProps> = ({
         </div>
         <div className="mt-10 parse">{parse(content)}</div>
       </div>
-      <div className="promotions bg-gray-200 w-[35rem] rounded-2xl">
+      <div className="promotions bg-gray-200 lg:w-[35rem] rounded-2xl">
         <div className="my-5 px-5">
           <h1 className="text-2xl font-bold">Promotions</h1>
         </div>

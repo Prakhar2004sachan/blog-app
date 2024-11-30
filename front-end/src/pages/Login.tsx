@@ -1,9 +1,10 @@
 import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuthStore } from "../store/authStore";
 import { toast } from "react-toastify";
+import { Loader } from "lucide-react";
 
 type Inputs = {
   name?: string;
@@ -52,6 +53,7 @@ function Login() {
           <input
             className="h-12 px-4 outline-none border-2 border-black rounded-lg focus:border-blue-500 transition-all duration-300"
             placeholder="Enter Your Email"
+            type="email"
             {...register("email", { required: "Email is required" })}
           />
           {errors.email && (
@@ -76,8 +78,20 @@ function Login() {
           type="submit"
           whileHover={{ scale: 1.05 }}
         >
-          Login
+          {isLoading ? (
+            <Loader className="animate-spin mx-auto" size={24} />
+          ) : (
+            "Login"
+          )}
         </motion.button>
+        <div className="flex items-center mb-6">
+          <Link
+            to="/forgot-password"
+            className="text-md text-blue-500 hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
         <motion.p
           onClick={() => navigate("/signup")}
           className="text-center cursor-pointer text-blue-500 hover:underline"

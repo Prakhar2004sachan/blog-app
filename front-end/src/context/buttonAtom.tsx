@@ -16,7 +16,7 @@ const ButtonAtom: React.FC<ButtonAtomProps> = ({
   type = "button",
 }) => (
   <div
-    className={`${color} py-2 text-white flex items-center justify-center px-4 rounded-full w-[7rem] sm:w-[10rem]`}
+    className={`${color} py-2 text-white flex items-center justify-start px-4 rounded-full w-[10rem]`}
   >
     {icon && <span className="mr-2 text-2xl">{icon}</span>}
     <button

@@ -1,39 +1,32 @@
-import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { motion } from "framer-motion";
-import axios from "axios";
-import { backendUrl } from "../App";
-import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { Loader } from "lucide-react";
+import { useAuthStore } from "./authStore";
 
 type Inputs = {
+  name?: string;
   email: string;
   password: string;
 };
 
 function Login() {
   const navigate = useNavigate();
+  const { login, error, isLoading } = useAuthStore();
+
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<Inputs>();
-
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     try {
-      const res = await axios.post(`${backendUrl}api/auth/login`, {
-        email: data.email,
-        password: data.password,
-      });
-      console.log("Login Successful:", res.data);
-      toast.success(res.data.message); // Display a success message
-      navigate('/')
-    } catch (error: any) {
-      console.error(
-        "Login Failed:",
-        error.response?.data?.message || error.message
-      );
-      alert(error.response?.data?.message || "An error occurred");
+      await login(data.email, data.password, data.name);
+      navigate("/");
+      toast.success("Login Successfully");
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -59,13 +52,8 @@ function Login() {
           <input
             className="h-12 px-4 outline-none border-2 border-black rounded-lg focus:border-blue-500 transition-all duration-300"
             placeholder="Enter Your Email"
-            {...register("email", {
-              required: "Email is required",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "Invalid email format",
-              },
-            })}
+            type="email"
+            {...register("email", { required: "Email is required" })}
           />
           {errors.email && (
             <span className="text-red-500 text-sm">{errors.email.message}</span>
@@ -81,14 +69,28 @@ function Login() {
               {errors.password.message}
             </span>
           )}
+
+          {error && <p className="text-red-500 font-semibold mb-2">{error}</p>}
         </motion.div>
         <motion.button
           className="bg-black text-white px-6 py-3 rounded-full cursor-pointer hover:bg-gray-700 transition duration-500"
           type="submit"
           whileHover={{ scale: 1.05 }}
         >
-          Login
+          {isLoading ? (
+            <Loader className="animate-spin mx-auto" size={24} />
+          ) : (
+            "Login"
+          )}
         </motion.button>
+        <div className="flex items-center mb-6">
+          <Link
+            to="/forgot-password"
+            className="text-md text-blue-500 hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
       </form>
     </motion.div>
   );

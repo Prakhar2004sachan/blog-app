@@ -98,18 +98,22 @@ export const login = async (req, res) => {
   try {
     const user = await userModel.findOne({ email });
     if (!user) {
-      res.status(400).json({ success: false, message: "Invalid Credentials" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid Credentials" });
     }
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      res.status(400).json({ success: false, message: "Invalid Credentials" });
+      return res
+        .status(402)
+        .json({ success: false, message: "Invalid Credentials" });
     }
 
     generateTokenAndSetCookie(res, user._id);
     user.lastLogin = new Date();
     await user.save();
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       message: "Logged in successfully",
       user: {
@@ -119,7 +123,7 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     console.error("Error on login");
-    res.status(420).json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 
@@ -164,6 +168,7 @@ export const forgotPassword = async (req, res) => {
       message: "Password reset link sent to your email",
     });
   } catch (error) {
+    console.log("Error in forgot password", error);
     res.status(404).json({ success: false, message: error.message });
   }
 };
@@ -219,3 +224,4 @@ export const checkAuth = async (req, res) => {
     });
   }
 };
+

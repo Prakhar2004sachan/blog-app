@@ -18,7 +18,7 @@ connectDB();
 connectCloudinary();
 
 // Middleware
-app.use(cors({ origin: "http://localhost:5173", credentials: true }));
+app.use(cors({ origin: ["http://localhost:5173", "http://localhost:5174"], credentials: true }));
 // app.use(bodyParser.json());
 app.use(express.json()); // Parse JSON bodies
 app.use(cookieParser()); // allow to parse cookie

@@ -1,17 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import { RxCross2 } from "react-icons/rx";
 import { FaHatCowboy } from "react-icons/fa";
 import { HiMiniBars4 } from "react-icons/hi2";
 import OutsideClickHandler from "react-outside-click-handler";
+import { useAuthStore } from "../pages/authStore";
+import { toast } from "react-toastify";
 
 function NavBar() {
-  const navLinks: string[] = ["Home", "All", "About"];
+  const navLinks: string[] = ["Home", "Posts", "About", "Contact"];
+  const { isAuthenticated, checkAuth, logout } = useAuthStore();
+
   const routes = (link: string) => {
     const address = link.toLowerCase();
     return address === "home" ? "" : address;
   };
   const [visible, setVisible] = useState(false);
+
+  const handleLogout = () => {
+    logout();
+    toast.success("Logout successfully");
+  };
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   return (
     <div className="2xl:px-[20rem] w-full h-[5rem] bg-zinc-100 px-6 border-b-2 shadow-md flex items-center justify-between">
@@ -36,12 +49,21 @@ function NavBar() {
               <p>{i}</p>
             </NavLink>
           ))}
-          <NavLink
-            to="/login"
-            className="py-2 px-4 rounded-full text-center transition-all duration-300 bg-black text-white w-[10rem]"
-          >
-            Login
-          </NavLink>
+          {isAuthenticated ? (
+            <button
+              onClick={handleLogout}
+              className="py-2 px-4 rounded-full text-center transition-all duration-300 bg-black text-white w-[10rem]"
+            >
+              Logout
+            </button>
+          ) : (
+            <NavLink
+              to={"/login"}
+              className="py-2 px-4 rounded-full text-center transition-all duration-300 bg-black text-white w-[10rem]"
+            >
+              Login
+            </NavLink>
+          )}
         </div>
         {/* Mobile and Medium Devices */}
         <HiMiniBars4
@@ -70,7 +92,7 @@ function NavBar() {
                     className={({ isActive }) =>
                       `py-3 rounded-full w-[10rem] text-center hover:text-white transition-all duration-300 ${
                         isActive
-                          ? "bg-aqua text-blue"
+                          ? "bg-zinc-400 text-white"
                           : i === "Login"
                           ? "bg-black text-white"
                           : "hover:bg-gray-300 hover:text-black"
@@ -83,13 +105,22 @@ function NavBar() {
                     {i}
                   </NavLink>
                 ))}
-                <NavLink
-                  to="/login"
-                  onClick={() => setVisible(false)}
-                  className="py-2 px-4 rounded-full text-center transition-all duration-300 bg-black text-white w-[10rem]"
-                >
-                  Login
-                </NavLink>
+                {isAuthenticated ? (
+                  <button
+                    onClick={handleLogout}
+                    className="py-2 px-4 rounded-full text-center transition-all duration-300 bg-black text-white w-[10rem]"
+                  >
+                    Logout
+                  </button>
+                ) : (
+                  <NavLink
+                    to="/login"
+                    onClick={() => setVisible(false)}
+                    className="py-2 px-4 rounded-full text-center transition-all duration-300 bg-black text-white w-[10rem]"
+                  >
+                    Login
+                  </NavLink>
+                )}
               </div>
             </div>
           </OutsideClickHandler>

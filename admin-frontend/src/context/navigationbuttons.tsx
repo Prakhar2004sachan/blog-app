@@ -20,21 +20,21 @@ const NavigationButtons: React.FC<NavigationButtonsProps> = ({
       color="bg-black"
       onClick={navigateBack}
       icon={<FaAngleLeft />}
-      className="bg-gray-200 text-xs w-[10rem] hover:bg-gray-300 rounded-lg flex gap-2 pl-2 py-2 items-center justify-start cursor-pointer"
+      className="bg-gray-500 text-xs w-[10rem] hover:bg-gray-900 rounded-lg flex gap-2 pl-2 py-2 items-center transition-all duration-500 justify-start cursor-pointer"
     />
     <ButtonAtom
       color="bg-red-600"
       label="Delete Post"
       onClick={deletePost} // Function executed on click
       icon={<MdDelete />}
-      className="bg-gray-200 text-xs w-[10rem] hover:bg-gray-300 rounded-lg flex gap-2 pl-2 py-2 items-center justify-start cursor-pointer"
+      className="bg-red-300 text-xs w-[10rem] hover:bg-red-700 rounded-lg flex gap-2 pl-2 py-2 items-center transition-all duration-500 justify-start cursor-pointer"
     />
     <ButtonAtom
       color="bg-black"
       label="Edit Post"
       onClick={navigateEdit}
       icon={<FaRegEdit />}
-      className="bg-gray-200 text-xs w-[10rem] hover:bg-gray-300 rounded-lg flex gap-2 pl-4 py-2 items-center justify-start cursor-pointer"
+      className="bg-gray-500 text-xs w-[10rem] hover:bg-gray-900 rounded-lg flex gap-2 pl-4 py-2 items-center transition-all duration-500 justify-start cursor-pointer"
     />
   </div>
 );

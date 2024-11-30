@@ -72,6 +72,7 @@ function Signup() {
             {...register("name")}
           />
           <input
+            type="email"
             className="h-12 px-4 outline-none border-2 border-black rounded-lg focus:border-blue-500 transition-all duration-300"
             placeholder="Enter Your Email"
             {...register("email", { required: "Email is required" })}

@@ -14,7 +14,7 @@ const authRouter = express.Router();
 
 authRouter.get("/check-auth", verifyToken, checkAuth);
 
-authRouter.post("/signup", signup);
+authRouter.post("/signup",signup);
 
 authRouter.post("/login", login);
 

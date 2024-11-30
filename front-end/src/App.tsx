@@ -13,11 +13,15 @@ import "react-toastify/dist/ReactToastify.css";
 import EmailVerification from "./pages/EmailVerification";
 import Signup from "./pages/SignUp";
 import { useAuthStore } from "./store/authStore";
+import ScrollToTop from "./components/ScrollToTop";
+import ResetRassword from "./pages/ResetRassword";
+import ForgotPassword from "./pages/ForgotPassword";
 
 export const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 // Protect routes that require authentication
 const ProtectedRoute = ({ children }) => {
+  // const [scroll, setScroll]= useState();
   const { isAuthenticated, user } = useAuthStore();
 
   if (!isAuthenticated) {
@@ -45,6 +49,7 @@ const RedirectAuthenticatedUser = ({ children }) => {
 function App() {
   return (
     <div>
+      <ScrollToTop />
       <NavBar />
       <ToastContainer
         position="top-center"
@@ -93,6 +98,21 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/reset-password/:token"
+            element={
+              <RedirectAuthenticatedUser>
+                <ResetRassword />
+              </RedirectAuthenticatedUser>
+            }
+          />
+          <Route
+          path="/forgot-password"
+          element={
+            <RedirectAuthenticatedUser>
+              <ForgotPassword/>
+            </RedirectAuthenticatedUser>
+          }/>
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

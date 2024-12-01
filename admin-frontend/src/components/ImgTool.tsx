@@ -31,7 +31,7 @@ function ImgTool() {
     try {
       const res = await axios.post(`${backendUrl}api/img/upload`, formData);
       if (res.data.success) {
-        console.log("Your URL is", res.data.imgData.img);
+        // console.log("Your URL is", res.data.imgData.img);
         setUrl(res.data.imgData.img); // Update the URL with the response data
         setProgress(false);
         toast.success("URL Generated");
